@@ -1,0 +1,61 @@
+<div>
+	<mat-card>
+		<mat-card-header>
+			<h3>
+				@switch(stage) {
+					@case("book") {
+						<span>Livros</span>
+					}
+					@case("chapter") {
+						<span>Capítulos</span>
+					}
+					@case("verse") {
+						<span>Versículos</span>
+					}
+				}
+			</h3>
+		</mat-card-header>
+		<mat-card-content>
+			<mat-grid-list cols="7" rowHeight="3em">
+				@if (stage == 'book') {
+					@for (book of bible().books; track book) {
+						<mat-grid-tile (click)="selectBook(book)"
+													[class.start]="book == selectedBookStart"
+													[class.middle]="$index > selectedBookStartIdx && $index <= hoveredBookIdx"
+													(mouseenter)="hoverBook($index)">{{book.abbrev}}</mat-grid-tile>
+					}
+				}
+				@if (stage == 'chapter' && selectedBookStart) {
+					@for (chapter of selectedBookStart.chapters; track $index) {
+						<mat-grid-tile (click)="selectChapter($index + 1)"
+													[class.start]="$index == (selectedChapterStart || 0) - 1"
+													[class.middle]="$index > (selectedChapterStart || 999) - 1 && $index <= hoveredChapter"
+													(mouseenter)="hoverChapter($index)">{{$index + 1}}</mat-grid-tile>
+					}
+				}
+				@if (stage == 'verse' && selectedBookStart && selectedChapterStart) {
+					@for (verse of selectedBookStart.chapters[selectedChapterStart - 1]; track $index) {
+						<mat-grid-tile (click)="selectVerse($index + 1)"
+													[class.start]="$index == (selectedVerseStart || 0) - 1"
+													[class.middle]="$index > (selectedVerseStart || 999) - 1 && $index <= hoveredVerse"
+													(mouseenter)="hoverVerse($index)">{{$index + 1}}</mat-grid-tile>
+					}
+				}
+			</mat-grid-list>
+		</mat-card-content>
+		<mat-card-footer>
+			<hr/>
+			@if (ready) {
+				@if (disable) {
+					<button mat-flat-button (click)="send()">OK</button>
+				}
+				@else {
+					<button (click)="send()">OK</button>
+				}
+			}
+			@if (stage != "book") {
+				<button (click)="goBack()">Voltar</button>
+			}
+		</mat-card-footer>
+	</mat-card>
+</div>
