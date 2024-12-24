@@ -13,3 +13,8 @@ export class Bible {
 	language: string = 'none'; // 'pt-br', 'en-us', etc
 	books: BibleBook[] = [];
 }
+export type BibleSelection = {
+	books: BibleBook[],
+	chapters: number[],
+	verses: number[]
+};
