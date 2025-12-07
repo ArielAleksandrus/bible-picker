@@ -7,9 +7,13 @@ import { Bible, BibleBook, BibleSelection } from './bible-picker/bible';
 
 import bibleARA from "./assets/bibles/bible-ara.json";
 
+import { BiblePicker, BibleARA } from 'bible-picker';
+
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, BiblePickerComponent],
+  imports: [CommonModule, BiblePickerComponent,
+    //this is our npm package imported
+    BiblePicker],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -17,16 +21,22 @@ export class AppComponent {
   title = 'bible-picker';
 
 
-  bible: Bible = <Bible>bibleARA;
+  bible: any = BibleARA;
+  bible2: Bible = <Bible>bibleARA;
 
-  selection?: BibleSelection;
+  selection1?: BibleSelection;
+  selection2?: BibleSelection;
+  selection3?: BibleSelection;
+  selection4?: BibleSelection;
 
   constructor() {
 
   }
 
-  showSelection(data: BibleSelection) {
-    this.selection = data;
+  showSelection(data: BibleSelection, idx: number = 1) {
+    //@ts-ignore
+    this[`selection${idx}`] = data;
+    console.log(data);
   }
 
 

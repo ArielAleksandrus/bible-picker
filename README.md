@@ -15,17 +15,31 @@ https://stackblitz.com/github/ArielAleksandrus/bible-picker
 
 On your component's .html file: *your-component.html*
 ```HTML
-<app-bible-picker
+
+<!-- you can use on [select]: 'book' | 'books' | 'chapter' | 'chapters' | 'verse' | 'verses' -->
+<bible-picker
   [bible]="bibleData"
-  [select]="'verse'"   <!-- optional: 'book' | 'chapter' | 'verse' -->
+  [select]="'verse'"   
   (onSelected)="onVerseSelected($event)">
-</app-bible-picker>
+</bible-picker>
 ```
 
 On your component's .ts file: *your-component.ts*
 ```Typescript
-// Load the default ARA Bible (or any other)
-bibleData = import('../assets/bible-ara.json');
+// import the bible picker and the bible version you want to use (currently only PT-Br ARA is available)
+import { BiblePicker, BibleARA } from 'bible-picker';
+
+// then, import it inside your component
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.html',
+  styleUrls: ['./home.scss'],
+  imports: [CommonModule, BiblePicker],
+  standalone: true
+})
+
+// finally, inside your component's class,
+bibleData = BibleARA;
 
 onVerseSelected(ref: any) {
   console.log('Selected:', ref);
@@ -49,8 +63,7 @@ The full JSON (66 books, all chapters and verses) is located at `src/assets/bibl
 ### Installation
 
 ```bash
-npm install
-ng serve
+npm install bible-picker --legacy-peer-deps
 ```
 
 ### Want a different version or language?

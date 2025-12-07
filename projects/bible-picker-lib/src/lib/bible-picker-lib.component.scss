@@ -1,0 +1,28 @@
+mat-card {
+  min-width: 280px;
+  max-width: 30em;
+}
+mat-grid-tile {
+  cursor: pointer;
+  &:hover {
+    background-color: lightpink;
+    border: .15em dashed red;
+  }
+}
+
+.start {
+  background-color: lightpink;
+  border: .15em dashed red;
+  border-right: 0;
+}
+.middle {
+  background-color: lightpink;
+  border: .15em dashed red;
+  border-right: 0;
+  &:not(hover) {
+    border-left: 0;
+  }
+  &:not(:has(~ .middle)) {
+    border-right: .15em dashed red;
+  }
+}

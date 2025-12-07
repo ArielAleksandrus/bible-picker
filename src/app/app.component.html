@@ -11,47 +11,48 @@
 <hr/>
 
 <h3>You can select only one book</h3>
-<app-bible-picker [bible]="bible" select="book" (onSelected)="showSelection($event)"></app-bible-picker>
+<!-- app-bible-picker is for testing this angular app. you can use only bible-picker if you have the npm package installed -->
+<app-bible-picker [bible]="bible2" select="book" (onSelected)="showSelection($event, 1)"></app-bible-picker>
 <div>
 
-  You have selected: @if(selection) { 
-    <button mat-button (click)="selection = undefined">Clear</button>
-    <span>{{selection | json}} </span>
+  You have selected: @if(selection1) {
+    <button mat-button (click)="selection1 = undefined">Clear</button>
+    <span>{{selection1 | json}} </span>
   }
 </div>
 
 <hr/>
 
 <h3>Or multiple books</h3>
-<app-bible-picker [bible]="bible" select="books" (onSelected)="showSelection($event)"></app-bible-picker>
+<bible-picker [bible]="bible" select="books" (onSelected)="showSelection($event, 2)"></bible-picker>
 <div>
 
-  You have selected: @if(selection) { 
-    <button mat-button (click)="selection = undefined">Clear</button>
-    <span>{{selection | json}} </span>
+  You have selected: @if(selection2) {
+    <button mat-button (click)="selection2 = undefined">Clear</button>
+    <span>{{selection2 | json}} </span>
   }
 </div>
 
 <hr/>
 
 <h3>You can also select Chapters</h3>
-<app-bible-picker [bible]="bible" select="chapters" (onSelected)="showSelection($event)"></app-bible-picker>
+<bible-picker [bible]="bible" select="chapters" (onSelected)="showSelection($event, 3)"></bible-picker>
 <div>
 
-  You have selected: @if(selection) { 
-    <button mat-button (click)="selection = undefined">Clear</button>
-    <span>{{selection | json}} </span>
+  You have selected: @if(selection3) {
+    <button mat-button (click)="selection3 = undefined">Clear</button>
+    <span>{{selection3 | json}} </span>
   }
 </div>
 
 <hr/>
 
 <h3>Or Verses</h3>
-<app-bible-picker [bible]="bible" select="verses" (onSelected)="showSelection($event)"></app-bible-picker>
+<bible-picker [bible]="bible" select="verses" (onSelected)="showSelection($event, 4)"></bible-picker>
 <div>
 
-  You have selected: @if(selection) { 
-    <button mat-button (click)="selection = undefined">Clear</button>
-    <span>{{selection | json}} </span>
+  You have selected: @if(selection4) {
+    <button mat-button (click)="selection4 = undefined">Clear</button>
+    <span>{{selection4 | json}} </span>
   }
 </div>

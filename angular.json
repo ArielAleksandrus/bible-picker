@@ -99,6 +99,39 @@
           }
         }
       }
+    },
+    "bible-picker-lib": {
+      "projectType": "library",
+      "root": "projects/bible-picker-lib",
+      "sourceRoot": "projects/bible-picker-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/bible-picker-lib/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/bible-picker-lib/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/bible-picker-lib/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/bible-picker-lib/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
