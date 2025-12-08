@@ -5,7 +5,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 
 
-import { Bible, BibleBook } from './bible';
+import { Bible, BibleBook, BibleSelection } from './bible';
 
 @Component({
   selector: 'bible-picker',
