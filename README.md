@@ -19,15 +19,16 @@ On your component's .html file: *your-component.html*
 <!-- you can use on [select]: 'book' | 'books' | 'chapter' | 'chapters' | 'verse' | 'verses' -->
 <bible-picker
   [bible]="bibleData"
-  [select]="'verse'"   
-  (onSelected)="onVerseSelected($event)">
+  [select]="verse"   
+  (onSelected)="yourCallback($event)">
 </bible-picker>
 ```
 
 On your component's .ts file: *your-component.ts*
 ```Typescript
-// import the bible picker and the bible version you want to use (currently only PT-Br ARA is available)
-import { BiblePicker, BibleARA } from 'bible-picker';
+// import the bible picker and the bible version you want to use (currently only PT-Br ARA and en-UK KJV are available)
+import { BiblePicker, BibleARA, BibleKJV } from 'bible-picker';
+import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
 
 // then, import it inside your component
 @Component({
@@ -41,10 +42,10 @@ import { BiblePicker, BibleARA } from 'bible-picker';
 // finally, inside your component's class,
 bibleData = BibleARA;
 
-onVerseSelected(ref: any) {
-  console.log('Selected:', ref);
-  // Example output:
-  // { book: "Gênesis", abbreviation: "Gn", chapter: 1, verse: 1, text: "No princípio, criou Deus..." }
+yourCallback(ref: BibleSelection) {
+  console.log('Selection:', ref);
+  console.log('Abbreviation: ', Bible.abbrevSelection(ref));
+  console.log('Verses: ', Bible.getVerses(ref));
 }
 ```
 
@@ -53,17 +54,16 @@ onVerseSelected(ref: any) {
 - Fully offline (local JSON)
 - Cascading selection: Book → Chapter → Verse
 - Flexible input: stop at book, chapter or verse (`[select]` input)
-- `(onSelected)` output with complete reference + verse text
 - Dark / light theme support (Material)
 
 ### Included Bible Version
-The default Bible data is **Almeida Revista e Atualizada (ARA)** – Portuguese (Brazil).  
-The full JSON (66 books, all chapters and verses) is located at `src/assets/bible-ara.json`.
+Import BibleARA for **Almeida Revista e Atualizada (ARA)** – Portuguese (Brazil).  
+Import BibleKJV **King James Version (KJV)** – English.
 
 ### Installation
 
 ```bash
-npm install bible-picker --legacy-peer-deps
+npm install bible-picker --legacy-peer-deps #(because it uses angular 19 and angular material)
 ```
 
 ### Want a different version or language?
@@ -71,10 +71,7 @@ Pull requests are very welcome!
 
 - Almeida Revista e Corrigida (ARC)
 - Nova Versão Internacional (NVI)
-- King James Version (KJV), Reina-Valera, etc.
 - Integration with online APIs
-
-Just add a new JSON file following the same structure as `bible-ara.json`.
 
 ### Contributing
 - Report bugs or request features
