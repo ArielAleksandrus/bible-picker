@@ -5,7 +5,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 
 
-import { Bible, BibleBook } from './bible';
+import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
 
 @Component({
   selector: 'app-bible-picker',
@@ -31,7 +31,7 @@ export class BiblePickerComponent {
   selectedChapterEnd?: number;
   selectedVerseEnd?: number;
 
-  onSelected = output<{books: BibleBook[], chapters: number[], verses: number[]}>();
+  onSelected = output<BibleSelection>();
 
   stage: 'book'|'chapter'|'verse' = 'book';
   ready = false;
@@ -42,15 +42,11 @@ export class BiblePickerComponent {
   }
 
   ngOnInit() {
-    console.log(this.bible());
+
   }
 
   send() {
-    let res: {
-      books: BibleBook[],
-      chapters: number[],
-      verses: number[]
-    } = {
+    let res: BibleSelection = {
       books: [],
       chapters: [],
       verses: []
@@ -75,6 +71,8 @@ export class BiblePickerComponent {
         res.verses.push(i);
       }
     }
+
+
 
     this.onSelected.emit(res);
   }

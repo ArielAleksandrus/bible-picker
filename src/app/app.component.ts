@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { BiblePickerComponent } from './bible-picker/bible-picker.component';
 
-import { Bible, BibleBook, BibleSelection } from './bible-picker/bible';
+import { Bible, BibleBook, BibleSelection, SelectedText } from './bible-picker/bible';
 
 import bibleARA from "./assets/bibles/bible-ara.json";
 
@@ -37,6 +37,13 @@ export class AppComponent {
     //@ts-ignore
     this[`selection${idx}`] = data;
     console.log(data);
+    //@ts-ignore
+    if(this[`selection${idx}`]){
+      //@ts-ignore
+      console.log(Bible.abbrevSelection(this[`selection${idx}`]));
+      //@ts-ignore
+      console.log(Bible.getVerses(this[`selection${idx}`]));
+    }
   }
 
 

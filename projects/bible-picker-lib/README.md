@@ -1,63 +1,89 @@
-# BiblePickerLib
+# Bible Picker  
+**An Angular “datepicker-style” component for selecting Bible references**
+<div align="center">
+<img src="https://raw.githubusercontent.com/ArielAleksandrus/bible-picker/master/demo.png" alt="Bible Picker – Light mode" width="45%"/>
+<img src="https://raw.githubusercontent.com/ArielAleksandrus/bible-picker/master/demo2.png" alt="Bible Picker – Dark mode" width="45%" style="margin-left: 20px;"/>
+<br/><br/>
+</div>
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.0.
+A clean, intuitive, cascading Bible reference picker inspired by Angular Material’s `MatDatepicker`.
 
-## Code scaffolding
+### Live Demo (StackBlitz– edit & run instantly)  
+https://stackblitz.com/github/ArielAleksandrus/bible-picker
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Usage
 
-```bash
-ng generate component component-name
+On your component's .html file: *your-component.html*
+```HTML
+
+<!-- you can use on [select]: 'book' | 'books' | 'chapter' | 'chapters' | 'verse' | 'verses' -->
+<bible-picker
+  [bible]="bibleData"
+  [select]="'verse'"   
+  (onSelected)="onVerseSelected($event)">
+</bible-picker>
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+On your component's .ts file: *your-component.ts*
+```Typescript
+// import the bible picker and the bible version you want to use (currently only PT-Br ARA is available)
+import { BiblePicker, BibleARA } from 'bible-picker';
 
-```bash
-ng generate --help
+// then, import it inside your component
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.html',
+  styleUrls: ['./home.scss'],
+  imports: [CommonModule, BiblePicker],
+  standalone: true
+})
+
+// finally, inside your component's class,
+bibleData = BibleARA;
+
+onVerseSelected(ref: any) {
+  console.log('Selected:', ref);
+  // Example output:
+  // { book: "Gênesis", abbreviation: "Gn", chapter: 1, verse: 1, text: "No princípio, criou Deus..." }
+}
 ```
 
-## Building
+### Features
+- Standalone component (easy to import)
+- Fully offline (local JSON)
+- Cascading selection: Book → Chapter → Verse
+- Flexible input: stop at book, chapter or verse (`[select]` input)
+- `(onSelected)` output with complete reference + verse text
+- Dark / light theme support (Material)
 
-To build the library, run:
+### Included Bible Version
+The default Bible data is **Almeida Revista e Atualizada (ARA)** – Portuguese (Brazil).  
+The full JSON (66 books, all chapters and verses) is located at `src/assets/bible-ara.json`.
 
-```bash
-ng build bible-picker-lib
-```
-
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
-
-### Publishing the Library
-
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-   ```bash
-   cd dist/bible-picker-lib
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Installation
 
 ```bash
-ng test
+npm install bible-picker --legacy-peer-deps
 ```
 
-## Running end-to-end tests
+### Want a different version or language?
+Pull requests are very welcome!
 
-For end-to-end (e2e) testing, run:
+- Almeida Revista e Corrigida (ARC)
+- Nova Versão Internacional (NVI)
+- King James Version (KJV), Reina-Valera, etc.
+- Integration with online APIs
 
-```bash
-ng e2e
-```
+Just add a new JSON file following the same structure as `bible-ara.json`.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Contributing
+- Report bugs or request features
+- Submit new translations / languages
+- Improve UI/UX
 
-## Additional Resources
+All contributions are appreciated!
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### License
+MIT © Ariel Aleksandrus
+
+Thank you for using and helping improve Bible Picker!

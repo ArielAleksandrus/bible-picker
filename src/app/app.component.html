@@ -12,7 +12,7 @@
 
 <h3>You can select only one book</h3>
 <!-- app-bible-picker is for testing this angular app. you can use only bible-picker if you have the npm package installed -->
-<app-bible-picker [bible]="bible2" select="book" (onSelected)="showSelection($event, 1)"></app-bible-picker>
+<app-bible-picker [bible]="bible2" select="verses" (onSelected)="showSelection($event, 1)"></app-bible-picker>
 <div>
 
   You have selected: @if(selection1) {
