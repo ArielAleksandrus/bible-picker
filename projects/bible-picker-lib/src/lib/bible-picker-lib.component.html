@@ -21,7 +21,7 @@
           @for (book of bible().books; track book) {
             <mat-grid-tile (click)="selectBook(book)"
                           [class.start]="book == selectedBookStart"
-                          [class.middle]="$index > selectedBookStartIdx && $index <= hoveredBookIdx"
+                          [class.middle]="$index > selectedBookStartIdx && $index <= hoveredBook"
                           (mouseenter)="hoverBook($index)">{{book.abbrev}}</mat-grid-tile>
           }
         }

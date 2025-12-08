@@ -6,6 +6,21 @@
 
 <hr/>
 
+<h1> Output </h1>
+
+<p>Here is a sample of <b>BibleSelection</b> (the $event you will get from (onSelected) callback), if you selected Gn 1:5-8</p>
+<pre>{{snippet2}}</pre>
+
+<br/>
+<br/>
+
+<p>Here is a sample of the <b>Bible.abbrevSelection</b> and <b>Bible.getVerses</b> functions, assuming you selected Gn 1:5-8</p>
+<p>You can also see these outputs in your dev's console</p>
+
+<pre>{{snippet3}}</pre>
+
+<hr/>
+
 <h1> Examples </h1>
 
 <hr/>
@@ -17,7 +32,7 @@
 
   You have selected: @if(selection1) {
     <button mat-button (click)="selection1 = undefined">Clear</button>
-    <span>{{selection1 | json}} </span>
+    <span>{{selection1}} </span>
   }
 </div>
 
@@ -29,7 +44,7 @@
 
   You have selected: @if(selection2) {
     <button mat-button (click)="selection2 = undefined">Clear</button>
-    <span>{{selection2 | json}} </span>
+    <span>{{selection2}} </span>
   }
 </div>
 
@@ -41,7 +56,7 @@
 
   You have selected: @if(selection3) {
     <button mat-button (click)="selection3 = undefined">Clear</button>
-    <span>{{selection3 | json}} </span>
+    <span>{{selection3}} </span>
   }
 </div>
 
@@ -53,6 +68,6 @@
 
   You have selected: @if(selection4) {
     <button mat-button (click)="selection4 = undefined">Clear</button>
-    <span>{{selection4 | json}} </span>
+    <span>{{selection4}} </span>
   }
 </div>

@@ -55,20 +55,20 @@ export class Bible {
       }
     }
     if(s.chapters.length > 0) {
-      const curChapter: Array<string> = curBook.chapters[s.chapters[0]];
+      const curChapter: Array<string> = curBook.chapters[s.chapters[0] - 1];
       res = [<SelectedText>{abbrev: curBook.abbrev, text: [curChapter]}];
       if(s.chapters.length > 1) {
         for(let i = 1; i < curBook.chapters.length; i++) {
-          res[0].text.push(curBook.chapters[s.chapters[i]]);
+          res[0].text.push(curBook.chapters[s.chapters[i] - 1]);
         }
       }
 
       if(s.verses.length > 0) {
-        const curVerse: string = curChapter[s.verses[0]];
+        const curVerse: string = curChapter[s.verses[0] - 1];
         res = [<SelectedText>{abbrev: curBook.abbrev, text: [[curVerse]]}];
         if(s.verses.length > 1) {
           for(let i = 1; i < s.verses.length; i++) {
-            res[0].text[0].push(curChapter[s.verses[i]]);
+            res[0].text[0].push(curChapter[s.verses[i] - 1]);
           }
         }
       }

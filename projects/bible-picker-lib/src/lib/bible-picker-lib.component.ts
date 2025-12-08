@@ -19,7 +19,8 @@ export class BiblePicker {
 
 
   selectedBookStartIdx: number = 999;
-  hoveredBookIdx: number = 0;
+  selectedBookEndIdx: number = 0;
+  hoveredBook: number = 0;
   hoveredChapter: number = 0;
   hoveredVerse: number = 0;
 
@@ -31,7 +32,7 @@ export class BiblePicker {
   selectedChapterEnd?: number;
   selectedVerseEnd?: number;
 
-  onSelected = output<{books: BibleBook[], chapters: number[], verses: number[]}>();
+  onSelected = output<BibleSelection>();
 
   stage: 'book'|'chapter'|'verse' = 'book';
   ready = false;
@@ -42,15 +43,11 @@ export class BiblePicker {
   }
 
   ngOnInit() {
-    console.log(this.bible());
+
   }
 
   send() {
-    let res: {
-      books: BibleBook[],
-      chapters: number[],
-      verses: number[]
-    } = {
+    let res: BibleSelection = {
       books: [],
       chapters: [],
       verses: []
@@ -76,6 +73,8 @@ export class BiblePicker {
       }
     }
 
+
+
     this.onSelected.emit(res);
   }
 
@@ -88,7 +87,7 @@ export class BiblePicker {
     } else if(this.stage == "chapter") {
       this.selectedChapterStart = this.selectedChapterEnd = this.selectedBookStart = this.selectedBookEnd = undefined;
       this.selectedBookStartIdx = 999;
-      this.hoveredBookIdx = this.hoveredChapter = 0;
+      this.hoveredBook = this.hoveredChapter = 0;
       this.disable = this.ready = false;
       this.stage = "book";
     }
@@ -96,7 +95,7 @@ export class BiblePicker {
 
   hoverBook(idx: number) {
     if(!this.disable && !this.selectedBookEnd) {
-      this.hoveredBookIdx = idx;
+      this.hoveredBook = idx;
     }
   }
   hoverChapter(idx: number) {
@@ -114,6 +113,7 @@ export class BiblePicker {
     // if both are set, we will override selection
     if(this.selectedBookStart && this.selectedBookEnd) {
       this.selectedBookStart = this.selectedBookEnd = undefined;
+      this.hoveredBook = 0;
     }
 
     if(!this.selectedBookStart || this.select() == "book") {
@@ -136,18 +136,21 @@ export class BiblePicker {
         }
       }
     } else {
+      this.selectedBookStartIdx = this.bible().books.indexOf(this.selectedBookStart);
+
       this.selectedBookEnd = book;
+      this.selectedBookEndIdx = this.bible().books.indexOf(book);;
 
-      let idxStart = this.bible().books.indexOf(this.selectedBookStart);
-      let idxEnd = this.bible().books.indexOf(book);
 
-      if(idxStart > idxEnd) {
+      if(this.selectedBookStartIdx > this.selectedBookEndIdx) {
         this.selectedBookStart = this.selectedBookEnd;
         this.selectedBookEnd = undefined;
-      } else if(idxStart == idxEnd && this.select() == "any") {
+        this.hoveredBook = 0;
+      } else if(this.selectedBookStartIdx == this.selectedBookEndIdx && this.select() == "any") {
         this.stage = 'chapter';
       } else {
         this.ready = this.disable = true;
+        this.hoveredBook = this.selectedBookEndIdx;
       }
     }
   }
@@ -156,6 +159,7 @@ export class BiblePicker {
     // if both are set, we will override selection
     if(this.selectedChapterStart && this.selectedChapterEnd) {
       this.selectedChapterStart = this.selectedChapterEnd = undefined;
+      this.hoveredChapter = 0;
     }
 
     if(!this.selectedChapterStart || this.select() == "chapter") {
@@ -181,10 +185,12 @@ export class BiblePicker {
       if(this.selectedChapterStart > this.selectedChapterEnd) {
         this.selectedChapterStart = this.selectedChapterEnd;
         this.selectedChapterEnd = undefined;
+        this.hoveredChapter = 0;
       } else if(this.selectedChapterStart == this.selectedChapterEnd && this.select() == "any") {
         this.stage = 'verse';
       } else {
         this.ready = this.disable = true;
+        this.hoveredChapter = this.selectedChapterEnd - 1;
       }
     }
   }
@@ -193,15 +199,25 @@ export class BiblePicker {
     // if both are set, we will override selection
     if(this.selectedVerseStart && this.selectedVerseEnd) {
       this.selectedVerseStart = this.selectedVerseEnd = undefined;
+      this.hoveredVerse = 0;
     }
 
     if(!this.selectedVerseStart || this.select() == "verse") {
       this.selectedVerseStart = verse;
 
-      if(this.select() == "verse") {
-        this.ready = this.disable = true;
-      } else {
-        this.ready = true;
+      switch(this.select()) {
+        case "verse": {
+          this.ready = this.disable = true;
+          break;
+        }
+        case "verses":
+        case "any": {
+          this.ready = true;
+          break;
+        }
+        default: {
+          this.stage = 'verse';
+        }
       }
     } else {
       this.selectedVerseEnd = verse;
@@ -209,7 +225,11 @@ export class BiblePicker {
       if(this.selectedVerseStart > this.selectedVerseEnd) {
         this.selectedVerseStart = this.selectedVerseEnd;
         this.selectedVerseEnd = undefined;
-      } else if(this.selectedVerseStart < this.selectedVerseEnd) {
+        this.hoveredVerse = 0;
+      } else if(this.selectedVerseStart == this.selectedVerseEnd && this.select() == "any") {
+        this.stage = 'verse';
+      } else {
+        this.hoveredVerse = this.selectedVerseEnd - 1;
         this.ready = this.disable = true;
       }
     }

@@ -7,7 +7,7 @@ import { Bible, BibleBook, BibleSelection, SelectedText } from './bible-picker/b
 
 import bibleARA from "./assets/bibles/bible-ara.json";
 
-import { BiblePicker, BibleARA } from 'bible-picker';
+import { BiblePicker, BibleARA, BibleKJV } from 'bible-picker';
 
 @Component({
   selector: 'app-root',
@@ -21,29 +21,26 @@ export class AppComponent {
   title = 'bible-picker';
 
 
-  bible: any = BibleARA;
+  bible: Bible = <Bible>BibleKJV;
   bible2: Bible = <Bible>bibleARA;
 
-  selection1?: BibleSelection;
-  selection2?: BibleSelection;
-  selection3?: BibleSelection;
-  selection4?: BibleSelection;
+  selection1?: string;
+  selection2?: string;
+  selection3?: string;
+  selection4?: string;
 
   constructor() {
 
   }
 
   showSelection(data: BibleSelection, idx: number = 1) {
+    console.log("Selection: ", data);
+
     //@ts-ignore
-    this[`selection${idx}`] = data;
-    console.log(data);
+    this[`selection${idx}`] = Bible.abbrevSelection(data);
+
     //@ts-ignore
-    if(this[`selection${idx}`]){
-      //@ts-ignore
-      console.log(Bible.abbrevSelection(this[`selection${idx}`]));
-      //@ts-ignore
-      console.log(Bible.getVerses(this[`selection${idx}`]));
-    }
+    console.log("Verses: ", Bible.getVerses(data));
   }
 
 
@@ -67,4 +64,31 @@ export class AppComponent {
       ]
     }]
 }`
+  snippet2 =
+`{
+  books: [{
+    abbrev: "Gn",
+    chapters: [["<The text of Gn 1:1>", "<The text of Gn 1:2>", ...], ["<The text of Gn 2:1>", "<The text of Gn 2:2>", ...], ...],
+    name: "Genesis"
+  }],
+  chapters: [1],
+  verses: [5,6,7,8]
+}`
+
+  snippet3 =
+`Bible.abbrevSelection(selection) -> "Gn 1:5-8"
+
+Bible.getVerses-> [
+  {
+    "abbrev": "Gn",
+    "text": [
+      [
+        "Mas uma neblina subia da terra e regava toda a superfície do solo.",
+        "Então, formou o SENHOR Deus ao homem do pó da terra e lhe soprou nas narinas o fôlego de vida, e o homem passou a ser alma vivente.",
+        "E plantou o SENHOR Deus um jardim no Éden, na direção do Oriente, e pôs nele o homem que havia formado.",
+        "Do solo fez o SENHOR Deus brotar toda sorte de árvores agradáveis à vista e boas para alimento; e também a árvore da vida no meio do jardim e a árvore do conhecimento do bem e do mal."
+      ]
+    ]
+  }
+]`
 }
