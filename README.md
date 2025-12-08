@@ -9,7 +9,7 @@
 A clean, intuitive, cascading Bible reference picker inspired by Angular Material’s `MatDatepicker`.
 
 ### Live Demo (StackBlitz– edit & run instantly)  
-https://stackblitz.com/github/ArielAleksandrus/bible-picker
+https://stackblitz.com/~/github.com/ArielAleksandrus/bible-picker
 
 ### Usage
 
