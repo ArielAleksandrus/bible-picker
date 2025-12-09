@@ -4,8 +4,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 
-
 import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
+
+export type OverridableCSS = {
+  "b": {[idx: number]: string},
+  "c": {[idx: number]: string},
+  "v": {[idx: number]: string}
+};
 
 @Component({
   selector: 'app-bible-picker',
@@ -16,6 +21,7 @@ import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
 export class BiblePickerComponent {
   bible = input.required<Bible>();
   select = input<'book'|'books'|'chapter'|'chapters'|'verse'|'verses'|'any'>('any');
+  customCSS = input<OverridableCSS>({"b": {}, "c": {}, "v": {}});
 
 
   selectedBookStartIdx: number = 999;
@@ -32,6 +38,7 @@ export class BiblePickerComponent {
   selectedChapterEnd?: number;
   selectedVerseEnd?: number;
 
+  onSelecting = output<BibleSelection>();
   onSelected = output<BibleSelection>();
 
   stage: 'book'|'chapter'|'verse' = 'book';
@@ -46,7 +53,7 @@ export class BiblePickerComponent {
 
   }
 
-  send() {
+  send(final: boolean) {
     let res: BibleSelection = {
       books: [],
       chapters: [],
@@ -75,7 +82,10 @@ export class BiblePickerComponent {
 
 
 
-    this.onSelected.emit(res);
+    if(final)
+      this.onSelected.emit(res);
+    else
+      this.onSelecting.emit(res);
   }
 
   goBack() {
@@ -91,6 +101,7 @@ export class BiblePickerComponent {
       this.disable = this.ready = false;
       this.stage = "book";
     }
+    this.send(false);
   }
 
   hoverBook(idx: number) {
@@ -153,6 +164,8 @@ export class BiblePickerComponent {
         this.hoveredBook = this.selectedBookEndIdx;
       }
     }
+
+    this.send(false);
   }
 
   selectChapter(chapter: number) {
@@ -193,6 +206,8 @@ export class BiblePickerComponent {
         this.hoveredChapter = this.selectedChapterEnd - 1;
       }
     }
+
+    this.send(false);
   }
 
   selectVerse(verse: number) {
@@ -233,5 +248,7 @@ export class BiblePickerComponent {
         this.ready = this.disable = true;
       }
     }
+
+    this.send(false);
   }
 }

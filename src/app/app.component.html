@@ -1,15 +1,30 @@
-<h1> Bible format </h1>
+<h1> Input </h1>
 
-<p>The bible you're adding should be a json formatted just like this example:</p>
+<p>The bible you're adding should be a json formatted just like this example (already included BibleARA (portuguese) and BibleKJV (english)):</p>
 
 <pre>{{snippet}}</pre>
+
+<p>What's the kind of selection you want? Use in <b>select</b></p>
+
+<pre>
+We allow 'book', 'books', 'chapter', 'chapters', 'verse', 'verses' and 'any' values. 'any' means that the user has to double click the book to open the chapters page, and double click the chapter to open the verses page, and at any time the user can click 'Ok' to finish selecting.
+</pre>
+
+<p>Do you want custom CSS in the books, chapters or pages? Use <b>customCSS</b>, like in the example below:</p>
+
+<pre>{{snippet1}}</pre>
 
 <hr/>
 
 <h1> Output </h1>
 
-<p>Here is a sample of <b>BibleSelection</b> (the $event you will get from (onSelected) callback), if you selected Gn 1:5-8</p>
+<p>Here is a sample of <b>BibleSelection</b> (the $event you will get from (<b>onSelected</b>) callback), if you selected Gn 1:5-8</p>
 <pre>{{snippet2}}</pre>
+
+<br/>
+<br/>
+
+<p>You can also get real-time selecting, before the user clicks 'Ok'. This event you will get from (<b>onSelecting</b>) has the same format (BibleSelection) as the example above. It will trigger whenever the user clicks the bible-picker (or the back button)</p>
 
 <br/>
 <br/>
@@ -25,9 +40,28 @@
 
 <hr/>
 
-<h3>You can select only one book</h3>
+<h3>You can select whatever you want <small>(Try "Is 9" and see custom colors)</small></h3>
 <!-- app-bible-picker is for testing this angular app. you can use only bible-picker if you have the npm package installed -->
-<app-bible-picker [bible]="bible2" select="book" (onSelected)="showSelection($event, 1)"></app-bible-picker>
+<app-bible-picker [bible]="bible2"
+                  select="any"
+                  [customCSS]="customCSS"
+                  (onSelecting)="seeWhatsSelecting($event)"
+                  (onSelected)="showSelection($event, 0)"></app-bible-picker>
+<div>
+
+  You have selected: @if(selection0) {
+    <button mat-button (click)="selection1 = undefined">Clear</button>
+    <span>{{selection0}} </span>
+  }
+</div>
+
+<hr/>
+
+<h3>You can select only one book</h3>
+
+<bible-picker [bible]="bible2"
+              select="book"
+              (onSelected)="showSelection($event, 1)"></bible-picker>
 <div>
 
   You have selected: @if(selection1) {

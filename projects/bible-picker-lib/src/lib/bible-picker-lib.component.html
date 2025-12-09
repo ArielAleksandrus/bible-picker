@@ -22,6 +22,7 @@
             <mat-grid-tile (click)="selectBook(book)"
                           [class.start]="book == selectedBookStart"
                           [class.middle]="$index > selectedBookStartIdx && $index <= hoveredBook"
+                          style="{{customCSS()['b'][$index]}}"
                           (mouseenter)="hoverBook($index)">{{book.abbrev}}</mat-grid-tile>
           }
         }
@@ -30,6 +31,7 @@
             <mat-grid-tile (click)="selectChapter($index + 1)"
                           [class.start]="$index == (selectedChapterStart || 0) - 1"
                           [class.middle]="$index > (selectedChapterStart || 999) - 1 && $index <= hoveredChapter"
+                          style="{{customCSS()['c'][$index]}}"
                           (mouseenter)="hoverChapter($index)">{{$index + 1}}</mat-grid-tile>
           }
         }
@@ -38,6 +40,7 @@
             <mat-grid-tile (click)="selectVerse($index + 1)"
                           [class.start]="$index == (selectedVerseStart || 0) - 1"
                           [class.middle]="$index > (selectedVerseStart || 999) - 1 && $index <= hoveredVerse"
+                          style="{{customCSS()['v'][$index]}}"
                           (mouseenter)="hoverVerse($index)">{{$index + 1}}</mat-grid-tile>
           }
         }
@@ -47,10 +50,10 @@
       <hr/>
       @if (ready) {
         @if (disable) {
-          <button mat-flat-button (click)="send()">OK</button>
+          <button mat-flat-button (click)="send(true)">OK</button>
         }
         @else {
-          <button (click)="send()">OK</button>
+          <button (click)="send(true)">OK</button>
         }
       }
       @if (stage != "book") {

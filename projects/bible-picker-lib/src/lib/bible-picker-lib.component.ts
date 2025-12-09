@@ -4,8 +4,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 
-
 import { Bible, BibleBook, BibleSelection } from './bible';
+
+export type OverridableCSS = {
+  "b": {[idx: number]: string},
+  "c": {[idx: number]: string},
+  "v": {[idx: number]: string}
+};
 
 @Component({
   selector: 'bible-picker',
@@ -16,6 +21,7 @@ import { Bible, BibleBook, BibleSelection } from './bible';
 export class BiblePicker {
   bible = input.required<Bible>();
   select = input<'book'|'books'|'chapter'|'chapters'|'verse'|'verses'|'any'>('any');
+  customCSS = input<OverridableCSS>({"b": {}, "c": {}, "v": {}});
 
 
   selectedBookStartIdx: number = 999;
@@ -32,6 +38,7 @@ export class BiblePicker {
   selectedChapterEnd?: number;
   selectedVerseEnd?: number;
 
+  onSelecting = output<BibleSelection>();
   onSelected = output<BibleSelection>();
 
   stage: 'book'|'chapter'|'verse' = 'book';
@@ -46,7 +53,7 @@ export class BiblePicker {
 
   }
 
-  send() {
+  send(final: boolean) {
     let res: BibleSelection = {
       books: [],
       chapters: [],
@@ -75,7 +82,10 @@ export class BiblePicker {
 
 
 
-    this.onSelected.emit(res);
+    if(final)
+      this.onSelected.emit(res);
+    else
+      this.onSelecting.emit(res);
   }
 
   goBack() {
@@ -91,6 +101,7 @@ export class BiblePicker {
       this.disable = this.ready = false;
       this.stage = "book";
     }
+    this.send(false);
   }
 
   hoverBook(idx: number) {
@@ -153,6 +164,8 @@ export class BiblePicker {
         this.hoveredBook = this.selectedBookEndIdx;
       }
     }
+
+    this.send(false);
   }
 
   selectChapter(chapter: number) {
@@ -193,6 +206,8 @@ export class BiblePicker {
         this.hoveredChapter = this.selectedChapterEnd - 1;
       }
     }
+
+    this.send(false);
   }
 
   selectVerse(verse: number) {
@@ -233,5 +248,7 @@ export class BiblePicker {
         this.ready = this.disable = true;
       }
     }
+
+    this.send(false);
   }
 }

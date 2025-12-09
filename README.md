@@ -19,7 +19,7 @@ On your component's .html file: *your-component.html*
 <!-- you can use on [select]: 'book' | 'books' | 'chapter' | 'chapters' | 'verse' | 'verses' -->
 <bible-picker
   [bible]="bibleData"
-  [select]="verse"   
+  [select]="'verse'"   
   (onSelected)="yourCallback($event)">
 </bible-picker>
 ```

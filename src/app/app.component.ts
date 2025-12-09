@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { BiblePickerComponent } from './bible-picker/bible-picker.component';
+import { BiblePickerComponent, OverridableCSS } from './bible-picker/bible-picker.component';
 
 import { Bible, BibleBook, BibleSelection, SelectedText } from './bible-picker/bible';
 
@@ -24,10 +24,13 @@ export class AppComponent {
   bible: Bible = <Bible>BibleKJV;
   bible2: Bible = <Bible>bibleARA;
 
+  selection0?: string;
   selection1?: string;
   selection2?: string;
   selection3?: string;
   selection4?: string;
+
+  customCSS = <OverridableCSS>{"b": {1: "background-color: red"}, "c": {}, "v": {}};
 
   constructor() {
 
@@ -41,6 +44,18 @@ export class AppComponent {
 
     //@ts-ignore
     console.log("Verses: ", Bible.getVerses(data));
+  }
+
+  seeWhatsSelecting(data: BibleSelection) {
+    if(data.books[0] && data.books[0].abbrev == "Is") {
+      this.customCSS = <OverridableCSS>{"b": {}, "c": {0: "background-color: red", 1: "background-color: yellow", 2: "background-color: green"}, "v": {}};
+      if(data.chapters.indexOf(9) > -1) {
+        this.customCSS = <OverridableCSS>{"b": {}, "c": {}, "v": {10: "background-color: brown;color: white", 11: "background-color: magenta", 12: "background-color: pink"}};
+      }
+    } else {
+      this.customCSS = <OverridableCSS>{"b": {1: "background-color: red"}, "c": {}, "v": {}};
+    }
+    console.log("Selecting...", data);
   }
 
 
@@ -63,6 +78,12 @@ export class AppComponent {
             ]
       ]
     }]
+}`
+  snippet1 = `
+{
+  "b": {1: "background-color: red"}, // the second book will have red background
+  "c": {5: "color: brown", 6: "color: brown"}, // all chapters 5 and 6 of every book will have a brown number color
+  "v": {0: "background-color: blue;color: pink"} // every first verse will have a blue background and a pink number color
 }`
   snippet2 =
 `{
