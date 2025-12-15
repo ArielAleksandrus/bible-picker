@@ -77,7 +77,7 @@ yourCallback(ref: BibleSelection) {
 ### Installation
 
 ```bash
-npm install bible-picker
+npm install bible-picker --legacy-peer-deps # as it uses angular 19. but it should work for other versions as well.
 ```
 
 ### Want a different version or language?
