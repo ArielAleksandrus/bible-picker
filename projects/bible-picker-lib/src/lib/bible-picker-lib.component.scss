@@ -115,3 +115,26 @@
     }
   }
 }
+
+
+// Ajustes específicos para telas muito estreitas (como cover screen do Fold fechado)
+@media (max-width: 380px) {
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));  // ainda menor se precisar
+    gap: 8px;
+    padding: 8px;
+    font-size: 0.9rem;  // opcional: reduz um pouco a fonte das abrevs
+  }
+
+  .book-item {
+    padding: 8px 4px;
+    min-height: 40px;
+  }
+}
+
+// Para telas normais de celular (400px+)
+@media (min-width: 381px) and (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  }
+}
