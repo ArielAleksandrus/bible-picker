@@ -5,9 +5,11 @@ import { BiblePickerComponent, OverridableCSS } from './bible-picker/bible-picke
 
 import { Bible, BibleBook, BibleSelection, SelectedText } from './bible-picker/bible';
 
-import bibleARA from "./assets/bibles/bible-ara.json";
+import { Observable } from 'rxjs';
 
-import { BiblePicker, BibleARA, BibleKJV } from 'bible-picker';
+import { BiblePicker } from 'bible-picker';
+
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -20,9 +22,23 @@ import { BiblePicker, BibleARA, BibleKJV } from 'bible-picker';
 export class AppComponent {
   title = 'bible-picker';
 
+  available = [{
+    version: "Portugues ARA",
+    url: "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/pt-ara.json"
+  }, {
+    version: "English NIV",
+    url: "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/en-niv.json"
+  }, {
+    version: "Español NVI",
+    url: "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/es-nvi.json"
+  }, {
+    version: "Chinese CNVS - 新译本（简体）",
+    url: "https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/zh-cnvs.json"
+  }];
 
-  bible: Bible = <Bible>BibleKJV;
-  bible2: Bible = <Bible>bibleARA;
+  bible?: Bible;
+
+  bibles: {version: string, bible: Bible}[] = [];
 
   selection0?: string;
   selection1?: string;
@@ -30,10 +46,37 @@ export class AppComponent {
   selection3?: string;
   selection4?: string;
 
-  customCSS = <OverridableCSS>{"b": {1: "background-color: red"}, "c": {}, "v": {}};
+  customCSS = <OverridableCSS>{"b": {}, "c": {}, "v": {}};
 
-  constructor() {
+  constructor(private http: HttpClient) {
 
+  }
+
+  selectBible(evt: any) {
+    let version = evt.target.value;
+    if(!version) {
+      this.bible = undefined;
+      return;
+    }
+
+    let found = this.bibles.find(bible => bible.version === version);
+    if(found) {
+      this.bible = found.bible;
+      return;
+    }
+
+    let aux = this.available.find(item => item.version === version);
+    if(!aux)
+      return;
+
+    this.http.get<Bible>(aux.url).subscribe({
+      next: (data: Bible) => {
+        this.bible = data;
+      },
+      error: (err: any) => {
+        console.error(`Erro ao baixar ${version}:`, err);
+      }
+    });
   }
 
   showSelection(data: BibleSelection, idx: number = 1) {
@@ -53,7 +96,7 @@ export class AppComponent {
         this.customCSS = <OverridableCSS>{"b": {}, "c": {}, "v": {10: "background-color: brown;color: white", 11: "background-color: magenta", 12: "background-color: pink"}};
       }
     } else {
-      this.customCSS = <OverridableCSS>{"b": {1: "background-color: red"}, "c": {}, "v": {}};
+      this.customCSS = <OverridableCSS>{"b": {}, "c": {}, "v": {}};
     }
     console.log("Selecting...", data);
   }

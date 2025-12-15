@@ -13,11 +13,23 @@ https://stackblitz.com/github/ArielAleksandrus/bible-picker
 
 ### Usage
 
+You no longer need to import a specific Bible version from the package.  
+You can load any supported Bible version directly from the public JSON files:
+
+| Language   | Bible Version                  | JSON URL                                                                                   |
+|------------|--------------------------------|--------------------------------------------------------------------------------------------|
+| Portuguese | Almeida Revista e Atualizada (ARA) | `https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/pt-ara.json`                  |
+| English    | New International Version (NIV)    | `https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/en-niv.json`                  |
+| Spanish    | Nueva Versión Internacional (NVI)  | `https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/es-nvi.json`                  |
+| Chinese    | Chinese New Version (Simplified)   | `https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/zh-cnvs.json`                 |
+
+If you have another version you want to use, see these examples so you format your bible and then you can import it.
+
 On your component's .html file: *your-component.html*
 ```HTML
 
 <!-- you can use on [select]: 'book' | 'books' | 'chapter' | 'chapters' | 'verse' | 'verses' -->
-<bible-picker
+<bible-picker *ngIf="bibleData"
   [bible]="bibleData"
   [select]="verse"   
   (onSelected)="yourCallback($event)">
@@ -27,7 +39,7 @@ On your component's .html file: *your-component.html*
 On your component's .ts file: *your-component.ts*
 ```Typescript
 // import the bible picker and the bible version you want to use (currently only PT-Br ARA and en-UK KJV are available)
-import { BiblePicker, BibleARA, BibleKJV } from 'bible-picker';
+import { BiblePicker } from 'bible-picker';
 import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
 
 // then, import it inside your component
@@ -40,7 +52,14 @@ import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
 })
 
 // finally, inside your component's class,
-bibleData = BibleARA;
+bibleData?: Bible;
+
+ngOnInit() {
+  // for example, Portuguese ARA version
+  fetch('https://pub-7db5ca77d7e14ca79a36013b9fc40870.r2.dev/jsons/pt-ara.json')
+      .then(response => response.json())
+      .then(data => this.bibleData = <Bible>data);
+}
 
 yourCallback(ref: BibleSelection) {
   console.log('Selection:', ref);
@@ -54,16 +73,11 @@ yourCallback(ref: BibleSelection) {
 - Fully offline (local JSON)
 - Cascading selection: Book → Chapter → Verse
 - Flexible input: stop at book, chapter or verse (`[select]` input)
-- Dark / light theme support (Material)
-
-### Included Bible Version
-Import BibleARA for **Almeida Revista e Atualizada (ARA)** – Portuguese (Brazil).  
-Import BibleKJV **King James Version (KJV)** – English.
 
 ### Installation
 
 ```bash
-npm install bible-picker --legacy-peer-deps #(because it uses angular 19 and angular material)
+npm install bible-picker
 ```
 
 ### Want a different version or language?

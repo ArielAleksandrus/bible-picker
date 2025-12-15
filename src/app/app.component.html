@@ -1,6 +1,6 @@
 <h1> Input </h1>
 
-<p>The bible you're adding should be a json formatted just like this example (already included BibleARA (portuguese) and BibleKJV (english)):</p>
+<p>The bible you're adding should be a json formatted just like this example:</p>
 
 <pre>{{snippet}}</pre>
 
@@ -36,72 +36,85 @@ We allow 'book', 'books', 'chapter', 'chapters', 'verse', 'verses' and 'any' val
 
 <hr/>
 
+<select *ngIf="bibles" (change)="selectBible($event)">
+  <option value="">Select</option>
+  @for(item of available; track $index; let i = $index) {
+    <option [value]="item.version">{{item.version}}</option>
+  }
+</select>
+
+<hr/>
+
 <h1> Examples </h1>
 
 <hr/>
+<div *ngIf="bible">
 
-<h3>You can select whatever you want <small>(Try "Is 9" and see custom colors)</small></h3>
-<!-- app-bible-picker is for testing this angular app. you can use only bible-picker if you have the npm package installed -->
-<app-bible-picker [bible]="bible2"
-                  select="any"
-                  [customCSS]="customCSS"
-                  (onSelecting)="seeWhatsSelecting($event)"
-                  (onSelected)="showSelection($event, 0)"></app-bible-picker>
-<div>
+  <h3>You can select whatever you want <small>(Try "Is 9" and see custom colors)</small></h3>
+  <!-- app-bible-picker is for testing this angular app. you can use only bible-picker if you have the npm package installed -->
+  <app-bible-picker [bible]="bible"
+                    select="any"
+                    [customCSS]="customCSS"
+                    (onSelecting)="seeWhatsSelecting($event)"
+                    (onSelected)="showSelection($event, 0)"></app-bible-picker>
+  <div>
 
-  You have selected: @if(selection0) {
-    <button mat-button (click)="selection1 = undefined">Clear</button>
-    <span>{{selection0}} </span>
-  }
-</div>
+    You have selected: @if(selection0) {
+      <button mat-button (click)="selection1 = undefined">Clear</button>
+      <span>{{selection0}} </span>
+    }
+    <br/>
+    <b>Check for more output in dev tools</b>
+  </div>
 
-<hr/>
+  <hr/>
 
-<h3>You can select only one book</h3>
+  <h3>You can select only one book</h3>
 
-<bible-picker [bible]="bible2"
-              select="book"
-              (onSelected)="showSelection($event, 1)"></bible-picker>
-<div>
+  <bible-picker [bible]="bible"
+                select="book"
+                (onSelected)="showSelection($event, 1)"></bible-picker>
+  <div>
 
-  You have selected: @if(selection1) {
-    <button mat-button (click)="selection1 = undefined">Clear</button>
-    <span>{{selection1}} </span>
-  }
-</div>
+    You have selected: @if(selection1) {
+      <button mat-button (click)="selection1 = undefined">Clear</button>
+      <span>{{selection1}} </span>
+    }
+  </div>
 
-<hr/>
+  <hr/>
 
-<h3>Or multiple books</h3>
-<bible-picker [bible]="bible" select="books" (onSelected)="showSelection($event, 2)"></bible-picker>
-<div>
+  <h3>Or multiple books</h3>
+  <bible-picker [bible]="bible" select="books" (onSelected)="showSelection($event, 2)"></bible-picker>
+  <div>
 
-  You have selected: @if(selection2) {
-    <button mat-button (click)="selection2 = undefined">Clear</button>
-    <span>{{selection2}} </span>
-  }
-</div>
+    You have selected: @if(selection2) {
+      <button mat-button (click)="selection2 = undefined">Clear</button>
+      <span>{{selection2}} </span>
+    }
+  </div>
 
-<hr/>
+  <hr/>
 
-<h3>You can also select Chapters</h3>
-<bible-picker [bible]="bible" select="chapters" (onSelected)="showSelection($event, 3)"></bible-picker>
-<div>
+  <h3>You can also select Chapters</h3>
+  <bible-picker [bible]="bible" select="chapters" (onSelected)="showSelection($event, 3)"></bible-picker>
+  <div>
 
-  You have selected: @if(selection3) {
-    <button mat-button (click)="selection3 = undefined">Clear</button>
-    <span>{{selection3}} </span>
-  }
-</div>
+    You have selected: @if(selection3) {
+      <button mat-button (click)="selection3 = undefined">Clear</button>
+      <span>{{selection3}} </span>
+    }
+  </div>
 
-<hr/>
+  <hr/>
 
-<h3>Or Verses</h3>
-<bible-picker [bible]="bible" select="verses" (onSelected)="showSelection($event, 4)"></bible-picker>
-<div>
+  <h3>Or Verses</h3>
+  <bible-picker [bible]="bible" select="verses" (onSelected)="showSelection($event, 4)"></bible-picker>
+  <div>
 
-  You have selected: @if(selection4) {
-    <button mat-button (click)="selection4 = undefined">Clear</button>
-    <span>{{selection4}} </span>
-  }
+    You have selected: @if(selection4) {
+      <button mat-button (click)="selection4 = undefined">Clear</button>
+      <span>{{selection4}} </span>
+    }
+  </div>
 </div>

@@ -1,10 +1,6 @@
 import { Component, input, output } from '@angular/core';
 
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatButtonModule } from '@angular/material/button';
-
-import { Bible, BibleBook, BibleSelection } from './bible';
+import { Bible, BibleBook, BibleSelection, SelectedText } from './bible';
 
 export type OverridableCSS = {
   "b": {[idx: number]: string},
@@ -12,9 +8,31 @@ export type OverridableCSS = {
   "v": {[idx: number]: string}
 };
 
+
+const bibleTerms = {
+  book: {
+    "en": "books",
+    "pt-br": "livros",
+    "es": "libros",
+    "zh": "书"  // Em chinês, "书" já é usado tanto no singular quanto no plural em contextos bíblicos
+  },
+  chapter: {
+    "en": "chapters",
+    "pt-br": "capítulos",
+    "es": "capítulos",
+    "zh": "章"
+  },
+  verse: {
+    "en": "verses",
+    "pt-br": "versículos",
+    "es": "versículos",
+    "zh": "节"
+  }
+};
+
 @Component({
   selector: 'bible-picker',
-  imports: [MatCardModule, MatGridListModule, MatButtonModule],
+  imports: [],
   templateUrl: './bible-picker-lib.component.html',
   styleUrl: './bible-picker-lib.component.scss'
 })
@@ -42,6 +60,7 @@ export class BiblePicker {
   onSelected = output<BibleSelection>();
 
   stage: 'book'|'chapter'|'verse' = 'book';
+  title: string = "Book";
   ready = false;
   disable = false;
 
@@ -50,7 +69,7 @@ export class BiblePicker {
   }
 
   ngOnInit() {
-
+    this.changeTitle();
   }
 
   send(final: boolean) {
@@ -88,6 +107,11 @@ export class BiblePicker {
       this.onSelecting.emit(res);
   }
 
+  changeTitle() {
+    //@ts-ignore
+    this.title = bibleTerms[this.stage][this.bible().language] || '';
+  }
+
   goBack() {
     if(this.stage == "verse") {
       this.selectedVerseStart = this.selectedVerseEnd = this.selectedChapterStart = this.selectedChapterEnd = undefined;
@@ -101,6 +125,7 @@ export class BiblePicker {
       this.disable = this.ready = false;
       this.stage = "book";
     }
+    this.changeTitle();
     this.send(false);
   }
 
@@ -165,6 +190,7 @@ export class BiblePicker {
       }
     }
 
+    this.changeTitle();
     this.send(false);
   }
 
@@ -207,6 +233,7 @@ export class BiblePicker {
       }
     }
 
+    this.changeTitle();
     this.send(false);
   }
 
@@ -222,12 +249,14 @@ export class BiblePicker {
 
       switch(this.select()) {
         case "verse": {
-          this.ready = this.disable = true;
+          this.ready = true;
+          this.disable = false;
           break;
         }
         case "verses":
         case "any": {
           this.ready = true;
+          this.disable = false;
           break;
         }
         default: {
@@ -245,10 +274,12 @@ export class BiblePicker {
         this.stage = 'verse';
       } else {
         this.hoveredVerse = this.selectedVerseEnd - 1;
-        this.ready = this.disable = true;
+        this.ready = true;
+        this.disable = false;
       }
     }
 
+    this.changeTitle();
     this.send(false);
   }
 }

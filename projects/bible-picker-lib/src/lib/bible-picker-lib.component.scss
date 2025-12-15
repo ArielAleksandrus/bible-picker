@@ -1,28 +1,117 @@
-mat-card {
-  min-width: 280px;
-  max-width: 30em;
+.bible-picker {
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, sans-serif;
 }
-mat-grid-tile {
-  cursor: pointer;
-  &:hover {
-    background-color: lightpink;
-    border: .15em dashed red;
+
+.picker-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.picker-header {
+  background: #333;
+  color: white;
+  padding: 16px 24px;
+
+  .picker-title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-transform: capitalize;
   }
 }
 
-.start {
-  background-color: lightpink;
-  border: .15em dashed red;
-  border-right: 0;
+.picker-content {
+  padding: 20px;
+  min-height: 300px;
 }
-.middle {
-  background-color: lightpink;
-  border: .15em dashed red;
-  border-right: 0;
-  &:not(hover) {
-    border-left: 0;
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.grid-item {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e3f2fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  &:not(:has(~ .middle)) {
-    border-right: .15em dashed red;
+
+  &.selected-start {
+    background: #1976d2 !important;
+    color: white;
+  }
+
+  &.selected-range {
+    background: #bbdefb;
+    color: #1976d2;
+  }
+}
+
+.picker-footer {
+  padding: 16px 24px;
+  background: #fafafa;
+
+  hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 0 0 16px 0;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &.btn-primary {
+    background: #1976d2;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #1565c0;
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  &.btn-secondary {
+    background: #eee;
+    color: #333;
+
+    &:hover {
+      background: #ddd;
+    }
   }
 }

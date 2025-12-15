@@ -3,5 +3,4 @@
  */
 
 export * from './lib/bible-picker-lib.component';
-export * from './data/bibles/index';
 export * from './lib/bible';
