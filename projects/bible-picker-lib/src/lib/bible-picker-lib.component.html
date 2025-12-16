@@ -29,8 +29,8 @@
           @for (chapter of selectedBookStart.chapters; track $index; let i = $index) {
             <div
               class="grid-item chapter-item"
-              [class.selected-start]="i === (selectedChapterStart || 0) - 1"
-              [class.selected-range]="i > (selectedChapterStart || 999) - 1 && i <= hoveredChapter"
+              [class.selected-start]="i === selectedChapterStart - 1"
+              [class.selected-range]="i > selectedChapterStart - 1 && i <= hoveredChapter"
               [style]="customCSS()['c'][i]"
               (click)="selectChapter(i + 1)"
               (mouseenter)="hoverChapter(i)"
@@ -45,8 +45,8 @@
           @for (verse of selectedBookStart.chapters[selectedChapterStart - 1]; track $index; let i = $index) {
             <div
               class="grid-item verse-item"
-              [class.selected-start]="i === (selectedVerseStart || 0) - 1"
-              [class.selected-range]="i > (selectedVerseStart || 999) - 1 && i <= hoveredVerse"
+              [class.selected-start]="i === selectedVerseStart - 1"
+              [class.selected-range]="i > selectedVerseStart - 1 && i <= hoveredVerse"
               [style]="customCSS()['v'][i]"
               (click)="selectVerse(i + 1)"
               (mouseenter)="hoverVerse(i)"
@@ -67,15 +67,12 @@
           </button>
         }
 
-        @if (ready) {
-          <button
-            class="btn btn-primary"
-            [disabled]="disable"
-            (click)="send(true)"
-          >
-            OK
-          </button>
-        }
+        <button
+          class="btn btn-primary"
+          [disabled]="disable"
+          (click)="send(true)">
+          OK
+        </button>
 
       </div>
     </footer>

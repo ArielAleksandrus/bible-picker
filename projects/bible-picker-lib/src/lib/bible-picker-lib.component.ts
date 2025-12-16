@@ -42,27 +42,27 @@ export class BiblePicker {
   customCSS = input<OverridableCSS>({"b": {}, "c": {}, "v": {}});
 
 
-  selectedBookStartIdx: number = 999;
-  selectedBookEndIdx: number = 0;
-  hoveredBook: number = 0;
-  hoveredChapter: number = 0;
-  hoveredVerse: number = 0;
+  selectedBookStartIdx: number = -1;
+  selectedBookEndIdx: number = -1;
+  hoveredBook: number = -1;
+  hoveredChapter: number = -1;
+  hoveredVerse: number = -1;
 
   selectedBookStart?: BibleBook;
-  selectedChapterStart?: number;
-  selectedVerseStart?: number;
+  selectedChapterStart: number = -1;
+  selectedVerseStart: number = -1;
 
   selectedBookEnd?: BibleBook;
-  selectedChapterEnd?: number;
-  selectedVerseEnd?: number;
+  selectedChapterEnd: number = -1;
+  selectedVerseEnd: number = -1;
 
   onSelecting = output<BibleSelection>();
   onSelected = output<BibleSelection>();
 
   stage: 'book'|'chapter'|'verse' = 'book';
   title: string = "Book";
-  ready = false;
   disable = false;
+  ready = false;
 
   constructor() {
 
@@ -79,30 +79,39 @@ export class BiblePicker {
       verses: []
     };
 
-    let bookEndIdx = this.selectedBookStartIdx;
-    if(this.selectedBookEnd)
-      bookEndIdx = this.bible().books.indexOf(this.selectedBookEnd);
+    let bsi = this.selectedBookStartIdx, bei = this.selectedBookEndIdx;
+    let csi = this.selectedChapterStart, cei = this.selectedChapterEnd;
+    let vsi = this.selectedVerseStart, vei = this.selectedVerseEnd;
 
-    for(let i = this.selectedBookStartIdx; i <= bookEndIdx; i++) {
+    if(bei == -1)
+      bei = bsi;
+    for(let i = this.selectedBookStartIdx; i <= bei; i++) {
       let book: BibleBook = this.bible().books[i];
       if(book)
         res.books.push(book);
     }
-    if(this.selectedChapterStart) {
-      for(let i = this.selectedChapterStart; i <= (this.selectedChapterEnd || this.selectedChapterStart); i++) {
+
+    if(csi > -1) {
+      if(cei == -1)
+        cei = csi;
+      for(let i = csi; i <= cei; i++) {
         res.chapters.push(i);
       }
     }
-    if(this.selectedVerseStart) {
-      for(let i = this.selectedVerseStart; i <= (this.selectedVerseEnd || this.selectedVerseStart); i++) {
+    if(vsi > -1) {
+      if(vei == -1)
+        vei = vsi;
+      for(let i = vsi; i <= vei; i++) {
         res.verses.push(i);
       }
     }
 
 
 
-    if(final)
+    if(final){
+      this.hoveredBook = this.hoveredChapter = this.hoveredVerse = -1;
       this.onSelected.emit(res);
+    }
     else
       this.onSelecting.emit(res);
   }
@@ -110,19 +119,23 @@ export class BiblePicker {
   changeTitle() {
     //@ts-ignore
     this.title = bibleTerms[this.stage][this.bible().language] || '';
+    if(this.stage == "chapter")
+      this.title += ` (${this.selectedBookStart?.abbrev})`;
+    else if(this.stage == "verse") {
+      this.title += ` (${this.selectedBookStart?.abbrev}.${this.selectedChapterStart})`;
+    }
   }
 
   goBack() {
+    this.disable = true;
     if(this.stage == "verse") {
-      this.selectedVerseStart = this.selectedVerseEnd = this.selectedChapterStart = this.selectedChapterEnd = undefined;
-      this.disable = this.ready = false;
-      this.hoveredChapter = 0;
+      this.selectedVerseStart = this.selectedVerseEnd = this.selectedChapterStart = this.selectedChapterEnd = this.hoveredChapter = -1;
       this.stage = "chapter";
     } else if(this.stage == "chapter") {
-      this.selectedChapterStart = this.selectedChapterEnd = this.selectedBookStart = this.selectedBookEnd = undefined;
-      this.selectedBookStartIdx = 999;
-      this.hoveredBook = this.hoveredChapter = 0;
-      this.disable = this.ready = false;
+      this.selectedBookStart = this.selectedBookEnd = undefined;
+      this.selectedBookStartIdx = this.selectedBookEndIdx = -1;
+      this.selectedChapterStart = this.selectedChapterEnd = this.hoveredBook = this.hoveredChapter = -1;
+      this.disable = true;
       this.stage = "book";
     }
     this.changeTitle();
@@ -130,171 +143,196 @@ export class BiblePicker {
   }
 
   hoverBook(idx: number) {
-    if(!this.disable && !this.selectedBookEnd) {
-      this.hoveredBook = idx;
+    let sel = this.select();
+    let si = this.selectedBookStartIdx;
+    let ei = this.selectedBookEndIdx;
+
+    if(si >= 0 && ei == -1) { // só se start is set e end is not set.
+      if(sel != "book") // só se sel não for book, porque se for, o usuário não pode ver hover ao arrastar o mouse para clicar em ok
+        this.hoveredBook = idx;
     }
   }
   hoverChapter(idx: number) {
-    if(!this.disable && !this.selectedChapterEnd) {
-      this.hoveredChapter = idx;
+    let sel = this.select();
+    if(this.selectedChapterStart >= 0 && this.selectedChapterEnd == -1) {
+      if(sel != "chapter")
+        this.hoveredChapter = idx;
     }
   }
   hoverVerse(idx: number) {
-    if(!this.disable && !this.selectedVerseEnd) {
-      this.hoveredVerse = idx;
+    let sel = this.select();
+    if(this.selectedVerseStart >= 0 && this.selectedVerseEnd == -1) {
+      if(sel != "verse")
+        this.hoveredVerse = idx;
     }
   }
 
-  selectBook(book: BibleBook) {
-    // if both are set, we will override selection
-    if(this.selectedBookStart && this.selectedBookEnd) {
-      this.selectedBookStart = this.selectedBookEnd = undefined;
-      this.hoveredBook = 0;
-    }
 
-    if(!this.selectedBookStart || this.select() == "book") {
+  selectBook(book: BibleBook): any {
+    let si = this.selectedBookStartIdx;
+    let ei = this.selectedBookEndIdx;
+    const i = this.bible().books.indexOf(book);
+    const sel: "book"|"books"|"chapter"|"chapters"|"verse"|"verses"|"any" = this.select();
+
+    this.disable = true;
+
+    if(si == -1) {
       this.selectedBookStart = book;
-      this.selectedBookStartIdx = this.bible().books.indexOf(book);
-
-      switch(this.select()) {
-        case "book": {
-          this.ready = this.disable = true;
-          break;
-        }
-        case "books":
-        case "any": {
-          this.ready = true;
-          break;
-        }
-        default: {
-          this.stage = 'chapter';
-          break;
-        }
-      }
-    } else {
-      this.selectedBookStartIdx = this.bible().books.indexOf(this.selectedBookStart);
-
-      this.selectedBookEnd = book;
-      this.selectedBookEndIdx = this.bible().books.indexOf(book);;
-
-
-      if(this.selectedBookStartIdx > this.selectedBookEndIdx) {
-        this.selectedBookStart = this.selectedBookEnd;
-        this.selectedBookEnd = undefined;
-        this.hoveredBook = 0;
-      } else if(this.selectedBookStartIdx == this.selectedBookEndIdx && this.select() == "any") {
-        this.stage = 'chapter';
+      si = this.selectedBookStartIdx = i;
+      if(sel == "any") {
+        this.disable = false;
+        this.send(false);
+        return;
+      } else if(sel == "book") {
+        this.send(true);
+        return;
+      } else if(sel == "books") {
+        this.send(false);
+        return;
       } else {
-        this.ready = this.disable = true;
-        this.hoveredBook = this.selectedBookEndIdx;
+        this.selectedBookEnd = book;
+        this.selectedBookEndIdx = i;
+        this.stage = "chapter";
+        this.changeTitle();
+        this.send(false);
+        return;
       }
     }
 
-    if(this.select() == 'any') {
-      this.ready = true;
+    if(ei == -1) {
+      //this.selectedBookEnd = book;
+      ei = this.selectedBookEndIdx = i;
+      if(ei < si) {
+        this.selectedBookStart = undefined;
+        this.selectedBookStartIdx = -1;
+        this.selectBook(book);
+        return;
+      } else if(ei == si) {
+        if(sel == "any") {
+          this.stage = "chapter";
+          this.changeTitle();
+          this.send(false);
+          return;
+        }
+      }
+      this.selectedBookEnd = book;
+      this.selectedBookEndIdx = i;
       this.disable = false;
+      this.send(false);
+      return;
     }
 
-    this.changeTitle();
-    this.send(false);
+    if(si > -1 && ei > -1) {
+      this.selectedBookStart = this.selectedBookEnd = undefined;
+      this.selectedBookStartIdx = this.selectedBookEndIdx = this.hoveredBook = -1;
+      this.selectBook(book);
+      return;
+    }
   }
 
   selectChapter(chapter: number) {
-    // if both are set, we will override selection
-    if(this.selectedChapterStart && this.selectedChapterEnd) {
-      this.selectedChapterStart = this.selectedChapterEnd = undefined;
-      this.hoveredChapter = 0;
-    }
+    let si = this.selectedChapterStart;
+    let ei = this.selectedChapterEnd;
+    const i = chapter;
+    const sel: "book"|"books"|"chapter"|"chapters"|"verse"|"verses"|"any" = this.select();
 
-    if(!this.selectedChapterStart || this.select() == "chapter") {
-      this.selectedChapterStart = chapter;
+    this.disable = true;
 
-      switch(this.select()) {
-        case "chapter": {
-          this.ready = this.disable = true;
-          break;
-        }
-        case "chapters":
-        case "any": {
-          this.ready = true;
-          break;
-        }
-        default: {
-          this.stage = 'verse';
-        }
-      }
-    } else {
-      this.selectedChapterEnd = chapter;
-
-      if(this.selectedChapterStart > this.selectedChapterEnd) {
-        this.selectedChapterStart = this.selectedChapterEnd;
-        this.selectedChapterEnd = undefined;
-        this.hoveredChapter = 0;
-      } else if(this.selectedChapterStart == this.selectedChapterEnd && this.select() == "any") {
-        this.stage = 'verse';
+    if(si == -1) {
+      si = this.selectedChapterStart = i;
+      if(sel == "any") {
+        this.disable = false;
+        this.send(false);
+        return;
+      } else if(sel == "chapter") {
+        this.send(true);
+        return;
+      } else if(sel == "chapters") {
+        this.send(false);
+        return;
       } else {
-        this.ready = this.disable = true;
-        this.hoveredChapter = this.selectedChapterEnd - 1;
+        this.selectedChapterEnd = i;
+        this.stage = "verse";
+        this.changeTitle();
+        this.send(false);
+        return;
       }
     }
 
-    if(this.select() == 'any') {
-      this.ready = true;
+    if(ei == -1) {
+      ei = this.selectedChapterEnd = i;
+      if(ei < si) {
+        this.selectedChapterStart = this.selectedChapterEnd = -1;
+        this.selectChapter(chapter);
+        return;
+      } else if(ei == si) {
+        if(sel == "any") {
+          this.stage = "verse";
+          this.changeTitle();
+          this.send(false);
+          return;
+        }
+      }
+      this.selectedChapterEnd = i;
       this.disable = false;
+      this.send(false);
+      return;
     }
 
-    this.changeTitle();
-    this.send(false);
+    if(si > -1 && ei > -1) {
+      this.selectedChapterStart = this.selectedChapterEnd = this.hoveredChapter = -1;
+      this.selectChapter(chapter);
+      return;
+    }
   }
 
   selectVerse(verse: number) {
-    // if both are set, we will override selection
-    if(this.selectedVerseStart && this.selectedVerseEnd) {
-      this.selectedVerseStart = this.selectedVerseEnd = undefined;
-      this.hoveredVerse = 0;
-    }
+    let si = this.selectedVerseStart;
+    let ei = this.selectedVerseEnd;
+    const i = verse;
+    const sel: "book"|"books"|"chapter"|"chapters"|"verse"|"verses"|"any" = this.select();
 
-    if(!this.selectedVerseStart || this.select() == "verse") {
-      this.selectedVerseStart = verse;
+    this.disable = true;
 
-      switch(this.select()) {
-        case "verse": {
-          this.ready = true;
-          this.disable = false;
-          break;
-        }
-        case "verses":
-        case "any": {
-          this.ready = true;
-          this.disable = false;
-          break;
-        }
-        default: {
-          this.stage = 'verse';
-        }
-      }
-    } else {
-      this.selectedVerseEnd = verse;
-
-      if(this.selectedVerseStart > this.selectedVerseEnd) {
-        this.selectedVerseStart = this.selectedVerseEnd;
-        this.selectedVerseEnd = undefined;
-        this.hoveredVerse = 0;
-      } else if(this.selectedVerseStart == this.selectedVerseEnd && this.select() == "any") {
-        this.stage = 'verse';
-      } else {
-        this.hoveredVerse = this.selectedVerseEnd - 1;
-        this.ready = true;
+    if(si == -1) {
+      si = this.selectedVerseStart = i;
+      if(sel == "any") {
         this.disable = false;
+        this.send(false);
+        return;
+      } else if(sel == "verse") {
+        this.send(true);
+        return;
+      } else if(sel == "verses") {
+        this.send(false);
+        return;
+      } else {
+        // will never reach here.
       }
     }
 
-    if(this.select() == 'any') {
-      this.ready = true;
+    if(ei == -1) {
+      ei = this.selectedVerseEnd = i;
+      if(ei < si) {
+        this.selectedVerseStart = this.selectedVerseEnd = -1;
+        this.selectVerse(verse);
+        return;
+      } else if(ei == si) {
+        if(sel == "any") {
+          this.send(false);
+          return;
+        }
+      }
+      this.selectedVerseEnd = i;
       this.disable = false;
+      this.send(false);
+      return;
     }
 
-    this.changeTitle();
-    this.send(false);
+    if(si > -1 && ei > -1) {
+      this.selectedVerseStart = this.selectedVerseEnd = this.hoveredVerse = -1;
+      this.selectVerse(verse);
+      return;
+    }
   }
 }
