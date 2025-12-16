@@ -1,6 +1,6 @@
 {
   "name": "bible-picker",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "peerDependencies": {
     "@angular/common": ">=19.0.0",

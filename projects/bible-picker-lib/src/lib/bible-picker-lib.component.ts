@@ -190,6 +190,11 @@ export class BiblePicker {
       }
     }
 
+    if(this.select() == 'any') {
+      this.ready = true;
+      this.disable = false;
+    }
+
     this.changeTitle();
     this.send(false);
   }
@@ -231,6 +236,11 @@ export class BiblePicker {
         this.ready = this.disable = true;
         this.hoveredChapter = this.selectedChapterEnd - 1;
       }
+    }
+
+    if(this.select() == 'any') {
+      this.ready = true;
+      this.disable = false;
     }
 
     this.changeTitle();
@@ -277,6 +287,11 @@ export class BiblePicker {
         this.ready = true;
         this.disable = false;
       }
+    }
+
+    if(this.select() == 'any') {
+      this.ready = true;
+      this.disable = false;
     }
 
     this.changeTitle();
