@@ -61,8 +61,7 @@ export class BiblePickerComponent {
 
   stage: 'book'|'chapter'|'verse' = 'book';
   title: string = "Book";
-  disable = false;
-  ready = false;
+  disable = true;
 
   constructor() {
 
