@@ -109,7 +109,6 @@ export class BiblePicker {
 
 
     if(final){
-      this.hoveredBook = this.hoveredChapter = this.hoveredVerse = -1;
       this.onSelected.emit(res);
     }
     else

@@ -4,6 +4,20 @@
       <h3 class="picker-title">
         {{title}}
       </h3>
+      <div class="actions">
+        @if (stage !== 'book') {
+          <button class="btn btn-secondary" (click)="goBack()">
+            ←
+          </button>
+        }
+
+        <button
+          class="btn btn-primary"
+          [disabled]="disable"
+          (click)="send(true)">
+          OK
+        </button>
+      </div>
     </header>
 
     <main class="picker-content">
